@@ -25,7 +25,7 @@ describe('Ixiptla Font Tokens', () => {
       const { family } = fontTokens.font;
       
       expect(family.headers).toEqual({
-        value: ["Playfair Display", "ui-serif", "Georgia", "serif"],
+        value: ["Newsreader", "ui-serif", "Georgia", "serif"],
         type: "fontFamily"
       });
 
@@ -38,11 +38,14 @@ describe('Ixiptla Font Tokens', () => {
     it('should match Ixiptla brand font families from CSS', () => {
       const { family } = fontTokens.font;
       
-      // Headers should use Playfair Display as primary
-      expect(family.headers.value[0]).toBe("Playfair Display");
+      // Headers should use Newsreader as primary
+      expect(family.headers.value[0]).toBe("Newsreader");
       
       // Base should use Inter as primary
       expect(family.base.value[0]).toBe("Inter");
+
+      // Labels and technical text use Space Grotesk
+      expect(family.label.value[0]).toBe("Space Grotesk");
     });
 
     it('should include proper fallback fonts', () => {
@@ -187,7 +190,7 @@ describe('Ixiptla Font Tokens', () => {
       const { family } = fontTokens.font;
       
       // Should use fonts that match the Google Fonts import
-      expect(family.headers.value[0]).toBe("Playfair Display");
+      expect(family.headers.value[0]).toBe("Newsreader");
       expect(family.base.value[0]).toBe("Inter");
     });
 
@@ -208,9 +211,9 @@ describe('Ixiptla Font Tokens', () => {
       const { family } = fontTokens.font;
       
       // Inter supports variable weights (100-900)
-      // Playfair Display supports variable weights (400-900)
+      // Newsreader supports variable weights (400-900)
       expect(family.base.value[0]).toBe("Inter");
-      expect(family.headers.value[0]).toBe("Playfair Display");
+      expect(family.headers.value[0]).toBe("Newsreader");
     });
   });
 }); 

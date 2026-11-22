@@ -21,6 +21,10 @@
   "main": "./dist/obsidiana/index.js",
   "module": "./dist/obsidiana/index.js",
   "types": "./dist/obsidiana/index.d.ts",
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
   "exports": {
     ".": {
       "types": "./dist/obsidiana/index.d.ts",

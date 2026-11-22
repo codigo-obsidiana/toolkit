@@ -128,7 +128,7 @@ describe('Ixiptla Color Tokens', () => {
         Object.entries(obj).forEach(([key, value]) => {
           if (typeof value === 'object' && value !== null) {
             if ('value' in value && 'type' in value) {
-              expect(key).toMatch(/^(default|content|\d+)$/);
+              expect(key).toMatch(/^(default|content|text|muted|subtle|lowest|low|container|high|highest|bright|\d+)$/);
             }
             validateNaming(value, [...path, key]);
           }
@@ -142,13 +142,26 @@ describe('Ixiptla Color Tokens', () => {
   describe('Color Token Completeness', () => {
     it('should have all required color variants', () => {
       const requiredVariants = ['default', 'content'];
-      const baseVariants = ['100', '200', '300', 'content'];
+      const baseVariants = ['100', '200', '300', 'content', 'muted'];
+
+      const roles = ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'];
+      const textRoles = roles.filter((role) => role !== 'neutral');
+
+      expect(tokens.color.border.light).toHaveProperty('default');
+      expect(tokens.color.border.dark).toHaveProperty('default');
+      expect(tokens.color.ring.light).toHaveProperty('default');
+      expect(tokens.color.ring.dark).toHaveProperty('default');
 
       Object.entries(tokens.color).forEach(([category, themes]) => {
+        if (!roles.includes(category) && category !== 'base') return;
         if (category === 'base') {
           expect(Object.keys(themes.light)).toEqual(expect.arrayContaining(baseVariants));
           expect(Object.keys(themes.dark)).toEqual(expect.arrayContaining(baseVariants));
         } else {
+          if (textRoles.includes(category)) {
+            expect(themes.light).toHaveProperty('text');
+            expect(themes.dark).toHaveProperty('text');
+          }
           expect(Object.keys(themes.light)).toEqual(expect.arrayContaining(requiredVariants));
           expect(Object.keys(themes.dark)).toEqual(expect.arrayContaining(requiredVariants));
         }
@@ -157,42 +170,37 @@ describe('Ixiptla Color Tokens', () => {
   });
 
   describe('Ixiptla Brand Specific Validations', () => {
-    it('should match the Ixiptla brand color scheme', () => {
-      // Validate primary color hue (around 40.24 degrees - warm orange/red)
-      expect(tokens.color.primary.light.default.value).toContain('40.24');
-      expect(tokens.color.primary.dark.default.value).toContain('40.24');
-      
-      // Validate base colors use consistent hue (83.24 degrees)
-      expect(tokens.color.base.light['100'].value).toContain('83.24');
-      expect(tokens.color.base.dark['100'].value).toContain('83.24');
+    const hue = (value: string) => Number(value.match(/oklch\([\d.]+% [\d.]+ ([\d.]+)\)/)?.[1]);
+    const lightness = (value: string) => Number(value.match(/oklch\(([\d.]+)%/)?.[1]);
+
+    it('should keep the Obsidian Codex terracotta primary hue', () => {
+      expect(hue(tokens.color.primary.light.default.value)).toBeGreaterThanOrEqual(35);
+      expect(hue(tokens.color.primary.light.default.value)).toBeLessThanOrEqual(45);
+      expect(hue(tokens.color.primary.dark.default.value)).toBeGreaterThanOrEqual(35);
+      expect(hue(tokens.color.primary.dark.default.value)).toBeLessThanOrEqual(45);
     });
 
-    it('should have proper contrast between light and dark themes', () => {
-      // Light theme should have dark content colors
-      const lightContentLightness = parseFloat(tokens.color.base.light.content.value.match(/oklch\((\d+\.?\d*)%/)?.[1] || '0');
-      expect(lightContentLightness).toBeLessThan(50);
-
-      // Dark theme should have light content colors
-      const darkContentLightness = parseFloat(tokens.color.base.dark.content.value.match(/oklch\((\d+\.?\d*)%/)?.[1] || '0');
-      expect(darkContentLightness).toBeGreaterThan(50);
+    it('should default to a near-black canvas in dark and warm paper in light', () => {
+      expect(lightness(tokens.color.base.dark['100'].value)).toBeLessThan(20);
+      expect(lightness(tokens.color.base.light['100'].value)).toBeGreaterThan(95);
+      expect(lightness(tokens.color.base.light.content.value)).toBeLessThan(50);
+      expect(lightness(tokens.color.base.dark.content.value)).toBeGreaterThan(50);
     });
 
-    it('should maintain brand consistency across semantic colors', () => {
-      // Info color should be blue (220 degrees)
-      expect(tokens.color.info.light.default.value).toContain('220');
-      expect(tokens.color.info.dark.default.value).toContain('220');
-      
-      // Success color should be green (140 degrees)
-      expect(tokens.color.success.light.default.value).toContain('140');
-      expect(tokens.color.success.dark.default.value).toContain('140');
-      
-      // Warning color should be yellow/orange (80 degrees)
-      expect(tokens.color.warning.light.default.value).toContain('80');
-      expect(tokens.color.warning.dark.default.value).toContain('80');
-      
-      // Error color should be red (30 degrees)
-      expect(tokens.color.error.light.default.value).toContain('30');
-      expect(tokens.color.error.dark.default.value).toContain('30');
+    it('should provide the tonal surface ladder in both modes', () => {
+      const ladder = ['lowest', 'low', 'container', 'high', 'highest', 'bright'];
+      expect(Object.keys(tokens.color.surface.light)).toEqual(ladder);
+      expect(Object.keys(tokens.color.surface.dark)).toEqual(ladder);
+    });
+
+    it('should maintain semantic hues for status colors', () => {
+      (['light', 'dark'] as const).forEach((mode) => {
+        expect(hue(tokens.color.info[mode].default.value)).toBe(220);
+        expect(hue(tokens.color.success[mode].default.value)).toBe(140);
+        expect(hue(tokens.color.warning[mode].default.value)).toBe(80);
+        expect(hue(tokens.color.error[mode].default.value)).toBeGreaterThanOrEqual(25);
+        expect(hue(tokens.color.error[mode].default.value)).toBeLessThanOrEqual(30);
+      });
     });
   });
-}); 
+});
