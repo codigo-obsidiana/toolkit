@@ -3,7 +3,7 @@
  */
 
 import type { ThemeMode } from '../../common/types.js';
-import { loadDesignTokens } from '../../common/utils.js';
+import { loadDesignTokens, remToPx } from '../../common/utils.js';
 
 /**
  * MUI Theme configuration for Ixiptla brand
@@ -30,7 +30,7 @@ export async function generateIxiptlaMUITheme(): Promise<IxiptlaMUITheme> {
       h6: { fontFamily: tokens.FontFamilyHeaders.join(',') },
     },
     shape: {
-      borderRadius: parseInt(tokens.DesignRadiusField) || 8,
+      borderRadius: remToPx(tokens.DesignRadiusField),
     },
     components: {
       MuiButton: {
@@ -59,22 +59,37 @@ export async function generateIxiptlaMUITheme(): Promise<IxiptlaMUITheme> {
       mode: 'light' as const,
       primary: {
         main: tokens.ColorPrimaryLightDefault,
+        contrastText: tokens.ColorPrimaryLightContent,
       },
       secondary: {
         main: tokens.ColorSecondaryLightDefault,
+        contrastText: tokens.ColorSecondaryLightContent,
       },
       error: {
         main: tokens.ColorErrorLightDefault,
+        contrastText: tokens.ColorErrorLightContent,
       },
       warning: {
         main: tokens.ColorWarningLightDefault,
+        contrastText: tokens.ColorWarningLightContent,
       },
       info: {
         main: tokens.ColorInfoLightDefault,
+        contrastText: tokens.ColorInfoLightContent,
       },
       success: {
         main: tokens.ColorSuccessLightDefault,
+        contrastText: tokens.ColorSuccessLightContent,
       },
+      background: {
+        default: tokens.ColorBaseLight100,
+        paper: tokens.ColorBaseLight200,
+      },
+      text: {
+        primary: tokens.ColorBaseLightContent,
+        secondary: tokens.ColorBaseLightMuted,
+      },
+      divider: tokens.ColorBorderLightDefault,
     },
   };
 
@@ -84,22 +99,37 @@ export async function generateIxiptlaMUITheme(): Promise<IxiptlaMUITheme> {
       mode: 'dark' as const,
       primary: {
         main: tokens.ColorPrimaryDarkDefault,
+        contrastText: tokens.ColorPrimaryDarkContent,
       },
       secondary: {
         main: tokens.ColorSecondaryDarkDefault,
+        contrastText: tokens.ColorSecondaryDarkContent,
       },
       error: {
         main: tokens.ColorErrorDarkDefault,
+        contrastText: tokens.ColorErrorDarkContent,
       },
       warning: {
         main: tokens.ColorWarningDarkDefault,
+        contrastText: tokens.ColorWarningDarkContent,
       },
       info: {
         main: tokens.ColorInfoDarkDefault,
+        contrastText: tokens.ColorInfoDarkContent,
       },
       success: {
         main: tokens.ColorSuccessDarkDefault,
+        contrastText: tokens.ColorSuccessDarkContent,
       },
+      background: {
+        default: tokens.ColorBaseDark100,
+        paper: tokens.ColorBaseDark200,
+      },
+      text: {
+        primary: tokens.ColorBaseDarkContent,
+        secondary: tokens.ColorBaseDarkMuted,
+      },
+      divider: tokens.ColorBorderDarkDefault,
     },
   };
 

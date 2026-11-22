@@ -23,6 +23,15 @@ export async function loadDesignTokens(brand: BrandName) {
 }
 
 /**
+ * Converts a rem or px token value to a pixel number (16px root), as MUI's shape.borderRadius expects
+ */
+export function remToPx(value: string, rootFontSize = 16): number {
+  const amount = Number.parseFloat(value);
+  if (Number.isNaN(amount)) return 0;
+  return value.trim().endsWith('rem') ? amount * rootFontSize : amount;
+}
+
+/**
  * Generic function to generate DaisyUI theme CSS for any brand
  */
 export async function generateDaisyUITheme(brand: BrandName) {
@@ -62,6 +71,11 @@ export async function generateDaisyUITheme(brand: BrandName) {
   --radius-selector: ${tokens.DesignRadiusSelector};
   --radius-field: ${tokens.DesignRadiusField};
   --radius-box: ${tokens.DesignRadiusBox};
+  --size-selector: ${tokens.DesignSizeSelector};
+  --size-field: ${tokens.DesignSizeField};
+  --border: ${tokens.DesignBorderWidth};
+  --depth: ${tokens.DesignEffectDepth};
+  --noise: ${tokens.DesignEffectNoise};
 }`;
 
   const darkTheme = `
@@ -98,6 +112,11 @@ export async function generateDaisyUITheme(brand: BrandName) {
   --radius-selector: ${tokens.DesignRadiusSelector};
   --radius-field: ${tokens.DesignRadiusField};
   --radius-box: ${tokens.DesignRadiusBox};
+  --size-selector: ${tokens.DesignSizeSelector};
+  --size-field: ${tokens.DesignSizeField};
+  --border: ${tokens.DesignBorderWidth};
+  --depth: ${tokens.DesignEffectDepth};
+  --noise: ${tokens.DesignEffectNoise};
 }`;
 
   return {
@@ -105,3 +124,44 @@ export async function generateDaisyUITheme(brand: BrandName) {
     dark: darkTheme
   };
 } 
+
+/**
+ * Generic function to generate Shadcn/UI CSS custom properties for any brand
+ */
+export async function generateShadcnTheme(brand: BrandName) {
+  const tokens = await loadDesignTokens(brand);
+
+  const variables = (mode: 'Light' | 'Dark') => {
+    const t = (name: string) => tokens[`Color${name.replace('{mode}', mode)}`];
+    return `
+    --background: ${t('Base{mode}100')};
+    --foreground: ${t('Base{mode}Content')};
+    --card: ${t('Base{mode}100')};
+    --card-foreground: ${t('Base{mode}Content')};
+    --popover: ${t('Base{mode}100')};
+    --popover-foreground: ${t('Base{mode}Content')};
+    --primary: ${t('Primary{mode}Default')};
+    --primary-foreground: ${t('Primary{mode}Content')};
+    --secondary: ${t('Secondary{mode}Default')};
+    --secondary-foreground: ${t('Secondary{mode}Content')};
+    --muted: ${t('Base{mode}200')};
+    --muted-foreground: ${t('Base{mode}Muted')};
+    --accent: ${t('Accent{mode}Default')};
+    --accent-foreground: ${t('Accent{mode}Content')};
+    --destructive: ${t('Error{mode}Default')};
+    --destructive-foreground: ${t('Error{mode}Content')};
+    --border: ${t('Border{mode}Default')};
+    --input: ${t('Border{mode}Default')};
+    --ring: ${t('Ring{mode}Default')};`;
+  };
+
+  return {
+    light: `
+  :root {${variables('Light')}
+    --radius: ${tokens.DesignRadiusField};
+  }`,
+    dark: `
+  .dark {${variables('Dark')}
+  }`,
+  };
+}

@@ -59,3 +59,47 @@ describe('Theme Generators', () => {
     });
   });
 }); 
+describe('Generated output uses existing tokens', () => {
+  const brands = ['ixiptla', 'obsidiana'] as const;
+
+  it.each(brands)('%s DaisyUI theme has no undefined values', async (brand) => {
+    const { generateDaisyUITheme } = await import('./common/utils.js');
+    const theme = await generateDaisyUITheme(brand);
+    expect(theme.light).not.toContain('undefined');
+    expect(theme.dark).not.toContain('undefined');
+    expect(theme.light).toContain('--border:');
+  });
+
+  it.each(brands)('%s shadcn theme has no undefined values and uses muted/border/ring tokens', async (brand) => {
+    const { generateShadcnTheme } = await import('./common/utils.js');
+    const { loadDesignTokens } = await import('./common/utils.js');
+    const tokens = await loadDesignTokens(brand);
+    const theme = await generateShadcnTheme(brand);
+    expect(theme.light).not.toContain('undefined');
+    expect(theme.dark).not.toContain('undefined');
+    expect(theme.light).toContain(`--muted-foreground: ${tokens.ColorBaseLightMuted};`);
+    expect(theme.light).toContain(`--border: ${tokens.ColorBorderLightDefault};`);
+    expect(theme.dark).toContain(`--ring: ${tokens.ColorRingDarkDefault};`);
+    expect(theme.light).toContain(`--primary-foreground: ${tokens.ColorPrimaryLightContent};`);
+  });
+
+  it.each(brands)('%s MUI theme has every palette value defined', async (brand) => {
+    const mui = await import('./mui/generators/index.js');
+    const generate = brand === 'ixiptla' ? mui.generateIxiptlaMUITheme : mui.generateObsidianaMUITheme;
+    const theme = await generate();
+    expect(JSON.stringify(theme)).not.toContain('undefined');
+    (['light', 'dark'] as const).forEach((mode) => {
+      const palette = theme[mode].palette as Record<string, Record<string, string>>;
+      expect(palette.primary.contrastText).toBeDefined();
+      expect(palette.text.secondary).toBeDefined();
+      expect(palette.divider).toBeDefined();
+    });
+  });
+
+  it('converts rem radius tokens to MUI pixel numbers', async () => {
+    const { remToPx } = await import('./common/utils.js');
+    expect(remToPx('0rem')).toBe(0);
+    expect(remToPx('0.5rem')).toBe(8);
+    expect(remToPx('4px')).toBe(4);
+  });
+});
