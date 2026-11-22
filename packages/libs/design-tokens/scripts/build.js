@@ -10,7 +10,8 @@ function getStyleDictionaryConfig(brand) {
     log: {
       verbosity: 'verbose'
     },
-    source: [`src/tokens/brands/${brand}/*.json`, 'src/tokens/base/**/*.json'],
+    // Base first, brand last: Style Dictionary keeps the last definition, so brand tokens override base ones.
+    source: ['src/tokens/base/**/*.json', `src/tokens/brands/${brand}/*.json`],
     platforms: {
       css: {
         transformGroup: 'css',

@@ -35,12 +35,12 @@ describe('Ixiptla Brand Token Integration', () => {
   });
 
   describe('Brand Consistency Across Token Types', () => {
-    it('should maintain consistent border radius values', () => {
+    it('should keep square corners across every radius slot', () => {
       const designRadius = designTokens.design.radius;
-      
-      // Box radius should be the largest
-      expect(parseFloat(designRadius.box.value)).toBeGreaterThan(parseFloat(designRadius.field.value));
-      expect(parseFloat(designRadius.field.value)).toBeGreaterThan(parseFloat(designRadius.selector.value));
+
+      expect(designRadius.box.value).toBe('0rem');
+      expect(designRadius.field.value).toBe('0rem');
+      expect(designRadius.selector.value).toBe('0rem');
     });
 
     it('should use consistent measurement units', () => {
@@ -101,15 +101,15 @@ describe('Ixiptla Brand Token Integration', () => {
   describe('CSS Variable Mapping', () => {
     it('should match expected CSS variable names and values', () => {
       // Validate color mappings
-      expect(colorTokens.color.base.light['100'].value).toBe('oklch(97% 0.01 83.24)');
-      expect(colorTokens.color.primary.light.default.value).toBe('oklch(55% 0.15 40.24)');
+      expect(colorTokens.color.base.light['100'].value).toBe('oklch(98.4% 0.011 76.6)');
+      expect(colorTokens.color.primary.light.default.value).toBe('oklch(48.3% 0.094 42.6)');
       
       // Validate design mappings
-      expect(designTokens.design.radius.box.value).toBe('0.5rem');
-      expect(designTokens.design.radius.field.value).toBe('0.375rem');
-      expect(designTokens.design.radius.selector.value).toBe('0.25rem');
-      expect(designTokens.design.border.width.value).toBe('1px');
-      expect(designTokens.design.effect.depth.value).toBe('1');
+      expect(designTokens.design.radius.box.value).toBe('0rem');
+      expect(designTokens.design.radius.field.value).toBe('0rem');
+      expect(designTokens.design.radius.selector.value).toBe('0rem');
+      expect(designTokens.design.border.width.value).toBe('0px');
+      expect(designTokens.design.effect.depth.value).toBe('0');
       
       // Validate transition mappings
       expect(designTokens.design.transition.duration.theme.value).toBe('0.3s');
@@ -148,18 +148,16 @@ describe('Ixiptla Brand Token Integration', () => {
 
   describe('Brand Identity Validation', () => {
     it('should maintain Ixiptla color scheme identity', () => {
-      // Primary colors should use the warm orange/red hue (40.24)
-      expect(colorTokens.color.primary.light.default.value).toContain('40.24');
-      expect(colorTokens.color.primary.dark.default.value).toContain('40.24');
-      
-      // Base colors should use the consistent hue (83.24)
-      expect(colorTokens.color.base.light['100'].value).toContain('83.24');
-      expect(colorTokens.color.base.dark['100'].value).toContain('83.24');
+      // Terracotta primary (light #8a4b31, dark #ffb59e) and ochre accent
+      expect(colorTokens.color.primary.light.default.value).toBe('oklch(48.3% 0.094 42.6)');
+      expect(colorTokens.color.primary.dark.default.value).toBe('oklch(83.7% 0.092 38)');
+      expect(colorTokens.color.accent.dark.default.value).toBe('oklch(82.9% 0.143 91.4)');
     });
 
     it('should use brand-specific typography', () => {
-      // Should use Playfair Display for headers
-      expect(fontTokens.font.family.headers.value[0]).toBe('Playfair Display');
+      // Should use Newsreader for headers and Space Grotesk for labels
+      expect(fontTokens.font.family.headers.value[0]).toBe('Newsreader');
+      expect(fontTokens.font.family.label.value[0]).toBe('Space Grotesk');
       
       // Should use Inter for body text
       expect(fontTokens.font.family.base.value[0]).toBe('Inter');
@@ -169,10 +167,10 @@ describe('Ixiptla Brand Token Integration', () => {
     });
 
     it('should support accessibility requirements', () => {
-      // Border width should be at least 1px for visibility
-      const borderWidth = parseInt(designTokens.design.border.width.value, 10);
-      expect(borderWidth).toBeGreaterThanOrEqual(1);
-      
+      // The brand is borderless by design; separation comes from the surface ladder
+      expect(designTokens.design.border.width.value).toBe('0px');
+      expect(colorTokens.color.surface.dark).toHaveProperty('container');
+
       // Transition duration should be reasonable for accessibility
       const transitionDuration = parseFloat(designTokens.design.transition.duration.theme.value);
       expect(transitionDuration).toBeLessThanOrEqual(0.5); // Max 500ms

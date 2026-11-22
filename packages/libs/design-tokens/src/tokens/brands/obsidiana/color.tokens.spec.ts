@@ -129,7 +129,7 @@ describe('Color Tokens', () => {
         Object.entries(obj).forEach(([key, value]) => {
           if (typeof value === 'object' && value !== null) {
             if ('value' in value && 'type' in value) {
-              expect(key).toMatch(/^(default|content|\d+)$/);
+              expect(key).toMatch(/^(default|content|text|muted|subtle|lowest|low|container|high|highest|bright|\d+)$/);
             }
             validateNaming(value, [...path, key]);
           }
@@ -143,13 +143,26 @@ describe('Color Tokens', () => {
   describe('Color Token Completeness', () => {
     it('should have all required color variants', () => {
       const requiredVariants = ['default', 'content'];
-      const baseVariants = ['100', '200', '300', 'content'];
+      const baseVariants = ['100', '200', '300', 'content', 'muted'];
+
+      const roles = ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'];
+      const textRoles = roles.filter((role) => role !== 'neutral');
+
+      expect(tokens.color.border.light).toHaveProperty('default');
+      expect(tokens.color.border.dark).toHaveProperty('default');
+      expect(tokens.color.ring.light).toHaveProperty('default');
+      expect(tokens.color.ring.dark).toHaveProperty('default');
 
       Object.entries(tokens.color).forEach(([category, themes]) => {
+        if (!roles.includes(category) && category !== 'base') return;
         if (category === 'base') {
           expect(Object.keys(themes.light)).toEqual(expect.arrayContaining(baseVariants));
           expect(Object.keys(themes.dark)).toEqual(expect.arrayContaining(baseVariants));
         } else {
+          if (textRoles.includes(category)) {
+            expect(themes.light).toHaveProperty('text');
+            expect(themes.dark).toHaveProperty('text');
+          }
           expect(Object.keys(themes.light)).toEqual(expect.arrayContaining(requiredVariants));
           expect(Object.keys(themes.dark)).toEqual(expect.arrayContaining(requiredVariants));
         }

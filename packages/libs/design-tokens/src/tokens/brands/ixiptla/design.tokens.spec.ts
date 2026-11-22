@@ -29,17 +29,17 @@ describe('Ixiptla Design Tokens', () => {
       const { radius } = designTokens.design;
       
       expect(radius.selector).toEqual({
-        value: '0.25rem',
+        value: '0rem',
         type: 'borderRadius'
       });
 
       expect(radius.field).toEqual({
-        value: '0.375rem',
+        value: '0rem',
         type: 'borderRadius'
       });
 
       expect(radius.box).toEqual({
-        value: '0.5rem',
+        value: '0rem',
         type: 'borderRadius'
       });
     });
@@ -48,9 +48,9 @@ describe('Ixiptla Design Tokens', () => {
       const { radius } = designTokens.design;
       
       // These values should match the CSS --radius-* variables
-      expect(radius.box.value).toBe('0.5rem'); // --radius-box
-      expect(radius.field.value).toBe('0.375rem'); // --radius-field
-      expect(radius.selector.value).toBe('0.25rem'); // --radius-selector
+      expect(radius.box.value).toBe('0rem'); // --radius-box
+      expect(radius.field.value).toBe('0rem'); // --radius-field
+      expect(radius.selector.value).toBe('0rem'); // --radius-selector
     });
   });
 
@@ -86,7 +86,7 @@ describe('Ixiptla Design Tokens', () => {
       const { border } = designTokens.design;
       
       expect(border.width).toEqual({
-        value: '1px',
+        value: '0px',
         type: 'borderWidth'
       });
     });
@@ -95,7 +95,7 @@ describe('Ixiptla Design Tokens', () => {
       const { border } = designTokens.design;
       
       // This should match the CSS --border variable
-      expect(border.width.value).toBe('1px');
+      expect(border.width.value).toBe('0px');
     });
   });
 
@@ -110,7 +110,7 @@ describe('Ixiptla Design Tokens', () => {
       const { effect } = designTokens.design;
       
       expect(effect.depth).toEqual({
-        value: '1',
+        value: '0',
         type: 'number'
       });
 
@@ -124,7 +124,7 @@ describe('Ixiptla Design Tokens', () => {
       const { effect } = designTokens.design;
       
       // This should match the CSS --depth variable
-      expect(effect.depth.value).toBe('1');
+      expect(effect.depth.value).toBe('0');
     });
   });
 
@@ -161,6 +161,14 @@ describe('Ixiptla Design Tokens', () => {
       // These should match the CSS --theme-transition-* variables
       expect(transition.duration.theme.value).toBe('0.3s');
       expect(transition.timing.theme.value).toBe('ease-in-out');
+    });
+  });
+
+  describe('Easing Tokens', () => {
+    it('should expose the Obsidian Codex easing curves', () => {
+      const { easing } = designTokens.design;
+      expect(easing['expo-out']).toEqual({ value: 'cubic-bezier(0.16, 1, 0.3, 1)', type: 'cubicBezier' });
+      expect(easing.spring).toEqual({ value: 'cubic-bezier(0.25, 1, 0.5, 1)', type: 'cubicBezier' });
     });
   });
 
