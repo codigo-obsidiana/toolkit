@@ -1,3 +1,17 @@
+## 0.1.0 (2026-11-22)
+
+### 🩹 Fixes
+
+- **themes:** read existing token names in shadcn and MUI generators ([80c3f29](https://github.com/codigo-obsidiana/toolkit/commit/80c3f29))
+
+### 🧱 Updated Dependencies
+
+- Updated design-tokens to 2.1.0
+
+### ❤️ Thank You
+
+- Itzli Molina @Itzli2000
+
 ## 0.0.3 (2025-06-28)
 
 ### 🚀 Features

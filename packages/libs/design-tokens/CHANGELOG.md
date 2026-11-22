@@ -1,3 +1,13 @@
+## 2.1.0 (2026-11-22)
+
+### 🚀 Features
+
+- **design-tokens:** add accessible text, muted, border and ring tokens ([2e3defa](https://github.com/codigo-obsidiana/toolkit/commit/2e3defa))
+
+### ❤️ Thank You
+
+- Itzli Molina @Itzli2000
+
 ## 2.0.2 (2025-06-28)
 
 ### 🚀 Features
